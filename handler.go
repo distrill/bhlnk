@@ -3,7 +3,6 @@ package blink
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	blinkdb "github.com/distrill/blink/db"
@@ -13,7 +12,6 @@ import (
 // MapHandler - base handler, looks up paths in map and if exist rewrite to map value (url)
 func MapHandler(pathsToUrls map[string]string, fallback http.Handler) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println(r.URL.Path)
 		if url, ok := pathsToUrls[r.URL.Path]; ok {
 			http.Redirect(w, r, url, http.StatusSeeOther)
 		} else {
@@ -37,11 +35,9 @@ func YAMLHandler(yml []byte, fallback http.Handler) (http.HandlerFunc, error) {
 
 	pathsToUrls := make(map[string]string)
 
-	fmt.Println(pathsToUrls)
 	for _, record := range redirects {
 		pathsToUrls[record.Path] = record.Url
 	}
-	fmt.Println(pathsToUrls)
 
 	return MapHandler(pathsToUrls, fallback), nil
 }
@@ -58,7 +54,6 @@ func JSONHandler(j []byte, fallback http.Handler) (http.HandlerFunc, error) {
 	for _, record := range redirects {
 		pathsToUrls[record.Path] = record.Url
 	}
-	fmt.Println(pathsToUrls)
 
 	return MapHandler(pathsToUrls, fallback), nil
 }

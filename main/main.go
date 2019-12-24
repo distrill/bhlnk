@@ -50,14 +50,11 @@ func NewRedirectHandler(db *sql.DB) http.Handler {
 	redirectHandler := blink.MapHandler(make(map[string]string), fallbackMux())
 	redirectHandler = blink.DbHandler(db, redirectHandler)
 
-	fmt.Println(1)
 	yamlfile := flag.String("yaml", "", "specify a yaml file containing redirects")
 	jsonfile := flag.String("json", "", "specify a json file containing redirects")
 	flag.Parse()
-	fmt.Println(2)
 
 	if *yamlfile != "" {
-		fmt.Println(3)
 		yaml, err := ioutil.ReadFile(*yamlfile)
 		if err != nil {
 			panic(err)
@@ -69,7 +66,6 @@ func NewRedirectHandler(db *sql.DB) http.Handler {
 	}
 
 	if *jsonfile != "" {
-		fmt.Println(4)
 		json, err := ioutil.ReadFile(*jsonfile)
 		if err != nil {
 			panic(err)
@@ -79,7 +75,6 @@ func NewRedirectHandler(db *sql.DB) http.Handler {
 			panic(err)
 		}
 	}
-	fmt.Println(5)
 	return redirectHandler
 }
 
@@ -116,10 +111,5 @@ func NewPutRedirectHandler(db *sql.DB) http.Handler {
 
 func fallbackMux() *http.ServeMux {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", hello)
 	return mux
-}
-
-func hello(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Hello, world!")
 }
