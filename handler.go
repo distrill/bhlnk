@@ -65,8 +65,10 @@ func DbHandler(db *sql.DB, fallback http.Handler) http.HandlerFunc {
 		url, err := blinkdb.GetUrl(db, id)
 		if err != nil {
 			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
-		} else {
+		} else if url != "" {
 			http.Redirect(w, r, url, http.StatusSeeOther)
+		} else {
+			fallback.ServeHTTP(w, r)
 		}
 	})
 }
