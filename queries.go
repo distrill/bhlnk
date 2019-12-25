@@ -1,4 +1,4 @@
-package db
+package main
 
 import (
 	"database/sql"
@@ -35,7 +35,7 @@ func NewDbConnection() (*sql.DB, error) {
 
 func runMigrations(cs string) error {
 	fmt.Println("Running migrations")
-	m, err := migrate.New("file://db/migrations", cs)
+	m, err := migrate.New("file://migrations", cs)
 	if err != nil {
 		return err
 	}

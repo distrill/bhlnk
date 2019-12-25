@@ -1,4 +1,4 @@
-module github.com/distrill/blink
+module distrill/blink
 
 go 1.13
 

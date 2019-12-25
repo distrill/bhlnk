@@ -3,25 +3,13 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
-	"flag"
 	"fmt"
 	"io/ioutil"
 	"net/http"
-
-	"github.com/distrill/blink"
-	blinkdb "github.com/distrill/blink/db"
-)
-
-const (
-	host     = "localhost"
-	port     = 5432
-	user     = "blink"
-	password = "blink"
-	dbname   = "blink"
 )
 
 func main() {
-	db, err := blinkdb.NewDbConnection()
+	db, err := NewDbConnection()
 	if err != nil {
 		panic(err)
 	}
@@ -47,34 +35,8 @@ func methodWrapper(handlers map[string]http.Handler) http.HandlerFunc {
 }
 
 func NewRedirectHandler(db *sql.DB) http.Handler {
-	redirectHandler := blink.MapHandler(make(map[string]string), fallbackMux())
-	redirectHandler = blink.DbHandler(db, redirectHandler)
-
-	yamlfile := flag.String("yaml", "", "specify a yaml file containing redirects")
-	jsonfile := flag.String("json", "", "specify a json file containing redirects")
-	flag.Parse()
-
-	if *yamlfile != "" {
-		yaml, err := ioutil.ReadFile(*yamlfile)
-		if err != nil {
-			panic(err)
-		}
-		redirectHandler, err = blink.YAMLHandler(yaml, redirectHandler)
-		if err != nil {
-			panic(err)
-		}
-	}
-
-	if *jsonfile != "" {
-		json, err := ioutil.ReadFile(*jsonfile)
-		if err != nil {
-			panic(err)
-		}
-		redirectHandler, err = blink.JSONHandler(json, redirectHandler)
-		if err != nil {
-			panic(err)
-		}
-	}
+	redirectHandler := MapHandler(make(map[string]string), fallbackMux())
+	redirectHandler = DbHandler(db, redirectHandler)
 	return redirectHandler
 }
 
@@ -95,7 +57,7 @@ func NewPutRedirectHandler(db *sql.DB) http.Handler {
 			return
 		}
 
-		path, err := blinkdb.GetPath(db, b.Url)
+		path, err := GetPath(db, b.Url)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
