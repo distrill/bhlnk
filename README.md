@@ -1,4 +1,4 @@
-### things to do next
-* CI (github actions?)
-* logs
-* frontend from / (simple form to generate link)
+### do me do me
+[x] frontend form (done see https://github.com/distrill/blink-client)
+[] CI (github actions?)
+[]* logs
