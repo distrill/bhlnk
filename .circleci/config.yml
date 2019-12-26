@@ -16,4 +16,4 @@ jobs:
       - run: go build
       - run: sudo apt-get update && sudo apt-get install rsync
       - run: rsync -v -e "ssh -o StrictHostKeyChecking=no" blink blink@142.93.26.159:/home/blink/blink/blink
-      - run: ssh -o "StrictHostKeyChecking no" blink@142.93.26.159 "systemctl --user restart blink"
+      - run: ssh -o "StrictHostKeyChecking no" blink@142.93.26.159 "systemctl --user restart blink || systemctl --user start blink"

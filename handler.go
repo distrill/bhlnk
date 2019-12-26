@@ -27,7 +27,7 @@ func NewDbHandler(db *sql.DB) http.HandlerFunc {
 		}
 
 		// url is not in our database
-		http.Error(w, "try harder my dude", http.StatusNotFound)
+		http.Error(w, "this is not the hook.", http.StatusNotFound)
 	})
 }
 
