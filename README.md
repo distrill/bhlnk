@@ -1,6 +1,6 @@
-# bhlnk
-## simple url shortener
+
 ![bhlnk-logo](https://i.imgur.com/PcCW9pG.png)
+## simple url shortener
 https://bhlnk.com
 
 ## do me do me
