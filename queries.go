@@ -71,10 +71,11 @@ func GetPath(db *sql.DB, url string) (string, error) {
 		VALUES
 			($1, $2)
 	`
-	_, err = db.Exec(sqlString, shortid.MustGenerate(), url)
+	_, err = db.Exec(sqlString, id, url)
 	if err != nil {
 		return "", nil
 	}
+
 	return id, err
 }
 

@@ -1,12 +1,12 @@
 package main
 
 import (
-	"database/sql"
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"github.com/rs/cors"
 	"net/http"
 )
+
+const STATIC_DIR = "/static/"
 
 func main() {
 	db, err := NewDbConnection()
@@ -16,12 +16,16 @@ func main() {
 	defer db.Close()
 
 	handlers := map[string]http.Handler{
-		http.MethodGet: NewRedirectHandler(db),
+		http.MethodGet: NewDbHandler(db),
 		http.MethodPut: NewPutRedirectHandler(db),
 	}
 
+	handler := cors.New(cors.Options{
+		AllowedMethods: []string{"PUT", "POST", "GET"},
+	}).Handler(methodWrapper(handlers))
+
 	fmt.Println("Starting the server on :8080")
-	http.ListenAndServe(":8080", methodWrapper(handlers))
+	http.ListenAndServe(":8080", handler)
 }
 
 func methodWrapper(handlers map[string]http.Handler) http.HandlerFunc {
@@ -32,49 +36,4 @@ func methodWrapper(handlers map[string]http.Handler) http.HandlerFunc {
 			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		}
 	})
-}
-
-func NewRedirectHandler(db *sql.DB) http.Handler {
-	redirectHandler := MapHandler(make(map[string]string), fallbackMux())
-	redirectHandler = DbHandler(db, redirectHandler)
-	return redirectHandler
-}
-
-func NewPutRedirectHandler(db *sql.DB) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		bs, err := ioutil.ReadAll(r.Body)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-		type body struct {
-			Url string `json:"url"`
-		}
-		var b body
-		err = json.Unmarshal(bs, &b)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-
-		path, err := GetPath(db, b.Url)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-
-		protocol := "http://"
-		if r.TLS != nil {
-			protocol = "https://"
-		}
-		fmt.Fprint(w, protocol+r.Host+"/"+path)
-	})
-}
-
-func fallbackMux() *http.ServeMux {
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
-		fmt.Fprintf(w, "Welcome to bhlnk!")
-	})
-	return mux
 }
