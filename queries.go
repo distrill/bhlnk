@@ -8,6 +8,8 @@ import (
 	_ "github.com/golang-migrate/migrate/source/file"
 	_ "github.com/lib/pq"
 	"github.com/teris-io/shortid"
+	"os"
+	"path/filepath"
 )
 
 // NewDbConnection - get a new db connection
@@ -35,7 +37,13 @@ func NewDbConnection() (*sql.DB, error) {
 
 func runMigrations(cs string) error {
 	fmt.Println("Running migrations")
-	m, err := migrate.New("file://migrations", cs)
+	ex, err := os.Executable()
+	path := filepath.Dir(ex)
+	if err != nil {
+		return nil
+	}
+	fmt.Printf("path: %v\n", path)
+	m, err := migrate.New("file://"+path+"/migrations", cs)
 	if err != nil {
 		return err
 	}
