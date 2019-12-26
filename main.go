@@ -1,14 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"github.com/rs/cors"
 	"net/http"
 )
 
-const STATIC_DIR = "/static/"
-
 func main() {
+	logger := NewLogger()
 	db, err := NewDbConnection()
 	if err != nil {
 		panic(err)
@@ -24,7 +22,7 @@ func main() {
 		AllowedMethods: []string{"PUT", "POST", "GET"},
 	}).Handler(methodWrapper(handlers))
 
-	fmt.Println("Starting the server on :8080")
+	logger.Info("Starting the server on :8080")
 	http.ListenAndServe(":8080", handler)
 }
 
