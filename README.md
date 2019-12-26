@@ -1,5 +1,6 @@
-# blink
+# bhlnk
 ## simple url shortener
+![bhlnk-logo](https://i.imgur.com/PcCW9pG.png)
 https://bhlnk.com
 
 ## do me do me
