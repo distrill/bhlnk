@@ -12,6 +12,7 @@ func main() {
 		panic(err)
 	}
 	defer db.Close()
+	defer FlushLogs()
 
 	handlers := map[string]http.Handler{
 		http.MethodGet: NewDbHandler(db),
